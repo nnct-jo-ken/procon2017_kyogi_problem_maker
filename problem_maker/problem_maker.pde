@@ -1,9 +1,9 @@
 //描画用変数
-final int grid_margin = 40;
-final int grid_space = 40;
+final int grid_margin = 20;
+final int grid_space = 20;
 
 void setup(){
-  size(800, 800);
+  size(400, 400);
   background(0);
   stroke(255);
   fill(255);
@@ -151,6 +151,36 @@ void draw(){
       fill(255);
       stroke(255);
       ellipse(w, h, 2, 2);
+    }
+  }
+  
+  //線・面を描画
+  for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
+    if(idx_1st != 0  && idx_1st != matrixX.length - 1 ){
+      fill(255, 255 / 2);
+      stroke(255);
+      beginShape();
+    }else{
+      if(idx_1st == 0){
+        stroke(255, 255, 0);
+      }else{
+        stroke(255);
+      }
+      noFill();
+      beginShape();
+    }
+    for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){  
+      vertex(matrixX[idx_1st][idx_2nd], matrixY[idx_1st][idx_2nd]);
+    }
+    if(idx_1st == matrixX.length - 1){
+      vertex(mouseX, mouseY);
+    }
+    endShape();
+  }
+  
+  //サークルを描画
+  for(int w = grid_margin; w <= width - grid_margin; w += grid_space){
+    for(int h = grid_margin; h <= height - grid_margin; h += grid_space){
       //頂点なら緑のサークルを
       for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
         for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){
@@ -176,30 +206,6 @@ void draw(){
         ellipse(w, h, grid_space, grid_space);
       }
     }
-  }
-  
-  //線を描画
-  for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
-    if(idx_1st != 0  && idx_1st != matrixX.length - 1 ){
-      fill(255, 255 / 2);
-      stroke(255);
-      beginShape();
-    }else{
-      if(idx_1st == 0){
-        stroke(255, 255, 0);
-      }else{
-        stroke(255);
-      }
-      noFill();
-      beginShape();
-    }
-    for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){  
-      vertex(matrixX[idx_1st][idx_2nd], matrixY[idx_1st][idx_2nd]);
-    }
-    if(idx_1st == matrixX.length - 1){
-      vertex(mouseX, mouseY);
-    }
-    endShape();
   }
   
 }
