@@ -94,9 +94,10 @@ void keyPressed(){
   //txt出力及び終了
   //「未完成」或いは「選択中」のピースは書き込まれない
   //データでは閉じないので、二次元目の最後は書き込まない
+  //一次元目0番は枠データだから最後に書き込む
   if(key == 'q'){
     save("puzzle.png");
-    for(int idx_1st = 0; idx_1st < matrixX.length - 1; idx_1st++){
+    for(int idx_1st = 1; idx_1st < matrixX.length - 1; idx_1st++){
       for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length - 1; idx_2nd++){
         output.print((matrixX[idx_1st][idx_2nd] - grid_margin) / grid_space);
         output.print(" ");
@@ -106,6 +107,11 @@ void keyPressed(){
         }
       }
       output.println("");
+    }
+    for(int idx_2nd = 0; idx_2nd < matrixX[0].length; idx_2nd++){
+      output.print((matrixX[0][idx_2nd] - grid_margin) / grid_space);
+        output.print(" ");
+        output.print((matrixY[0][idx_2nd] - grid_margin) / grid_space);
     }
     output.flush();
     output.close();
@@ -169,15 +175,18 @@ void draw(){
     }
   }
   
-  fill(255);
-  stroke(255);
-  
   //線を描画
   for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
-    if(idx_1st != matrixX.length - 1){
+    if(idx_1st != 0  && idx_1st != matrixX.length - 1 ){
       fill(255, 255 / 2);
+      stroke(255);
       beginShape();
     }else{
+      if(idx_1st == 0){
+        stroke(255, 255, 0);
+      }else{
+        stroke(255);
+      }
       noFill();
       beginShape();
     }
