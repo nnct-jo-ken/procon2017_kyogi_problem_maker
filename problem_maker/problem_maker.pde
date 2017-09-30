@@ -1,6 +1,14 @@
 //描画用変数
-int grid_margin = 20;
-int grid_space = 20;
+final int grid_margin = 40;
+final int grid_space = 40;
+
+void setup(){
+  size(800, 800);
+  background(0);
+  stroke(255);
+  fill(255);
+  output = createWriter("puzzle.txt");
+}
 
 //座標格納用配列(二次元)
 //2つとも完全に対応したインデックスを持つが、代表はmatrixXとする
@@ -72,7 +80,7 @@ void mousePressed(){
   if(mouseButton == LEFT){
     for(int w = grid_margin; w <= width - grid_margin; w += grid_space){
       for(int h = grid_margin; h <= height - grid_margin; h += grid_space){
-        if(inScope(mouseX, w - 5, w + 5) && inScope(mouseY, h - 3, h + 3)){
+        if(inScope(mouseX, w - grid_space / 4, w + grid_space / 4) && inScope(mouseY, h - grid_space / 4, h + grid_space / 4)){
           matrixX[matrixX.length - 1] = append(matrixX[matrixX.length - 1], w);
           matrixY[matrixY.length - 1] = append(matrixY[matrixY.length - 1], h);
           if(w == matrixX[matrixX.length - 1][0] && h == matrixY[matrixY.length - 1][0] && matrixX[matrixX.length - 1].length != 1){
@@ -108,10 +116,13 @@ void keyPressed(){
       }
       output.println("");
     }
-    for(int idx_2nd = 0; idx_2nd < matrixX[0].length; idx_2nd++){
+    for(int idx_2nd = 0; idx_2nd < matrixX[0].length - 1; idx_2nd++){
       output.print((matrixX[0][idx_2nd] - grid_margin) / grid_space);
+      output.print(" ");
+      output.print((matrixY[0][idx_2nd] - grid_margin) / grid_space);
+      if(idx_2nd != matrixX[0].length - 2){
         output.print(" ");
-        output.print((matrixY[0][idx_2nd] - grid_margin) / grid_space);
+      }
     }
     output.flush();
     output.close();
@@ -131,14 +142,6 @@ void keyPressed(){
   }
 }
 
-void setup(){
-  size(400,400);
-  background(0);
-  stroke(255);
-  fill(255);
-  output = createWriter("puzzle.txt");
-}
-
 void draw(){
   background(0);
   
@@ -154,7 +157,7 @@ void draw(){
           if(w == matrixX[idx_1st][idx_2nd] && h == matrixY[idx_1st][idx_2nd]){
             noFill();
             stroke(0, 255, 0);
-            ellipse(w, h, 20, 20);
+            ellipse(w, h, grid_space, grid_space);
           }
         }
       }
@@ -163,14 +166,14 @@ void draw(){
         if(w == matrixX[matrixX.length - 1][0] && h == matrixY[matrixY.length - 1][0]){
           noFill();
           stroke(255, 0, 0);
-          ellipse(w, h, 20, 20);
+          ellipse(w, h, grid_space, grid_space);
         }
       }
       //選択されているなら黄色いサークルを
-      if(inScope(mouseX, w - 5, w + 5) && inScope(mouseY, h - 3, h + 3)){
+      if(inScope(mouseX, w - grid_space / 4, w + grid_space / 4) && inScope(mouseY, h - grid_space / 4, h + grid_space / 4)){
         noFill();
         stroke(255, 255, 0);
-        ellipse(w, h, 20, 20);
+        ellipse(w, h, grid_space, grid_space);
       }
     }
   }
