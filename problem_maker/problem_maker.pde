@@ -7,6 +7,7 @@ int grid_space = 20;
 int [][] matrixX = { {} };
 int [][] matrixY = { {} };
 
+//座標保護用配列(二次元)
 int [][] matrixX_sub = { {} };
 int [][] matrixY_sub = { {} };
 
@@ -39,6 +40,18 @@ int [][] addArray(int array[][]){
   //参照渡しだと思ってたら変更できなかった　append等も「返す」仕様だから仕方ない
   //なんで一次元目だとappendもconcatもできないんだよファックするぞ
   //ArrayList？知らない子ですね
+}
+
+//ディープ・コピーしたものを「返す」関数
+//ディープ・コピーをサポートする
+int [][] deep_copy(int [][] array){
+  int [][] copy = new int[array.length][0];
+  for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
+    for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
+      copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
+    }
+  }
+  return copy;
 }
 
 //一次元目の尻の配列に、要素が存在するかどうか判定する関数
@@ -82,6 +95,7 @@ void keyPressed(){
   //「未完成」或いは「選択中」のピースは書き込まれない
   //データでは閉じないので、二次元目の最後は書き込まない
   if(key == 'q'){
+    save("puzzle.png");
     for(int idx_1st = 0; idx_1st < matrixX.length - 1; idx_1st++){
       for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length - 1; idx_2nd++){
         output.print((matrixX[idx_1st][idx_2nd] - grid_margin) / grid_space);
@@ -102,12 +116,12 @@ void keyPressed(){
     matrixY = new int [1][0];
   //現時点での座標を全て保護
   }else if(key == 'c'){
-    matrixX_sub = matrixX;
-    matrixY_sub = matrixY;
+    matrixX_sub = deep_copy(matrixX);
+    matrixY_sub = deep_copy(matrixY);
   //保護した座標を全て復活
   }else if(key == 'v'){
-    matrixX = matrixX_sub;
-    matrixY = matrixY_sub;
+    matrixX = deep_copy(matrixX_sub);
+    matrixY = deep_copy(matrixY_sub);
   }
 }
 
@@ -155,11 +169,19 @@ void draw(){
     }
   }
   
+  fill(255);
+  stroke(255);
+  
   //線を描画
   for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
-    beginShape();
-    for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){
+    if(idx_1st != matrixX.length - 1){
+      fill(255, 255 / 2);
+      beginShape();
+    }else{
       noFill();
+      beginShape();
+    }
+    for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){  
       vertex(matrixX[idx_1st][idx_2nd], matrixY[idx_1st][idx_2nd]);
     }
     if(idx_1st == matrixX.length - 1){
@@ -169,3 +191,8 @@ void draw(){
   }
   
 }
+
+//メモ
+//Array = Array はシャロー・コピーになる
+//配列関数は二次元配列をサポートしない
+//createWriterは実行された時点で同名ファイルを空にする
