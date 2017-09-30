@@ -128,6 +128,16 @@ void draw(){
       fill(255);
       stroke(255);
       ellipse(w, h, 2, 2);
+      //頂点なら緑のサークルを
+      for(int idx_1st = 0; idx_1st < matrixX.length; idx_1st++){
+        for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length; idx_2nd++){
+          if(w == matrixX[idx_1st][idx_2nd] && h == matrixY[idx_1st][idx_2nd]){
+            noFill();
+            stroke(0, 255, 0);
+            ellipse(w, h, 20, 20);
+          }
+        }
+      }
       //現在の始点には赤いサークルを
       if(idxExist(matrixX)){
         if(w == matrixX[matrixX.length - 1][0] && h == matrixY[matrixY.length - 1][0]){
