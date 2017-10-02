@@ -50,6 +50,23 @@ int [][] addArray(int array[][]){
   //ArrayList？知らない子ですね
 }
 
+//二次元配列の一次元目のn番インデックスを削除したものを「返す」変数
+//Rubyのdelete_atにあたる(「返す」という点が違うが…)
+int [][] delete_at(int [][] array, int idx){
+  if(array.length != 1){
+    int [][] copy = new int[array.length - 1][0];
+    for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
+      for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
+        if(idx_1st != idx){
+          copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
+        }
+      }
+    }
+    return copy;
+  }
+  return array;
+}
+
 //ディープ・コピーしたものを「返す」関数
 //ディープ・コピーをサポートする
 int [][] deep_copy(int [][] array){
@@ -139,6 +156,10 @@ void keyPressed(){
   }else if(key == 'v'){
     matrixX = deep_copy(matrixX_sub);
     matrixY = deep_copy(matrixY_sub);
+  //最後に完成したピースを削除
+  }else if(key == 'd'){
+    matrixX = delete_at(matrixX, matrixX.length - 2);
+    matrixY = delete_at(matrixY, matrixY.length - 2);
   }
 }
 
