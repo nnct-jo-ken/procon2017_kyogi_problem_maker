@@ -52,23 +52,18 @@ int [][] addArray(int array[][]){
 
 //二次元配列の一次元目のn番インデックスを削除したものを「返す」変数
 //Rubyのdelete_atにあたる(「返す」という点が違うが…)
-//インデックス数が0になってしまう場合削除しない
 int [][] delete_at(int [][] array, int idx){
-  println(array.length);
-  if(array.length != 1){
-    int [][] copy = new int[array.length - 1][0];
-    for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
-      for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
-        if(idx_1st < idx){
-          copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
-        }else if(idx_1st > idx){
-          copy[idx_1st - 1] = append(copy[idx_1st - 1], array[idx_1st][idx_2nd]);
-        }
+  int [][] copy = new int[array.length - 1][0];
+  for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
+    for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
+      if(idx_1st < idx){
+        copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
+      }else if(idx_1st > idx){
+        copy[idx_1st - 1] = append(copy[idx_1st - 1], array[idx_1st][idx_2nd]);
       }
     }
-    return copy;
   }
-  return array;
+  return copy;
 }
 
 //ディープ・コピーしたものを「返す」関数
@@ -160,10 +155,13 @@ void keyPressed(){
   }else if(key == 'v'){
     matrixX = deep_copy(matrixX_sub);
     matrixY = deep_copy(matrixY_sub);
-  //最後に完成したピースを削除
+  //最後に完成したピース・枠を削除
+  //完成したピース・枠がない場合機能しない
   }else if(key == 'd'){
-    matrixX = delete_at(matrixX, matrixX.length - 2);
-    matrixY = delete_at(matrixY, matrixY.length - 2);
+    if(matrixX.length != 1){
+      matrixX = delete_at(matrixX, matrixX.length - 2);
+      matrixY = delete_at(matrixY, matrixY.length - 2);
+    }
   }
 }
 
