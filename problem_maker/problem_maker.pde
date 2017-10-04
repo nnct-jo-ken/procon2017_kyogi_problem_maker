@@ -50,20 +50,25 @@ int [][] addArray(int array[][]){
   //ArrayList？知らない子ですね
 }
 
-//二次元配列の一次元目のn番インデックスを削除したものを「返す」変数
+//二次元配列の一次元目のn番構成要素を削除したものを「返す」変数
+//指定したインデックスがない場合動作しない
 //Rubyのdelete_atにあたる(「返す」という点が違うが…)
 int [][] delete_at(int [][] array, int idx){
-  int [][] copy = new int[array.length - 1][0];
-  for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
-    for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
-      if(idx_1st < idx){
-        copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
-      }else if(idx_1st > idx){
-        copy[idx_1st - 1] = append(copy[idx_1st - 1], array[idx_1st][idx_2nd]);
+  if(idx <= array.length - 1 && idx >= 0){
+    int [][] copy = new int[array.length - 1][0];
+    for(int idx_1st = 0; idx_1st < array.length; idx_1st++){
+      for(int idx_2nd = 0; idx_2nd < array[idx_1st].length; idx_2nd++){
+        if(idx_1st < idx){
+          copy[idx_1st] = append(copy[idx_1st], array[idx_1st][idx_2nd]);
+        }else if(idx_1st > idx){
+          copy[idx_1st - 1] = append(copy[idx_1st - 1], array[idx_1st][idx_2nd]);
+        }
       }
     }
+    return copy;
+  }else{
+    return array;
   }
-  return copy;
 }
 
 //ディープ・コピーしたものを「返す」関数
@@ -79,13 +84,17 @@ int [][] deep_copy(int [][] array){
 }
 
 //一次元目の尻の配列に、要素が存在するかどうか判定する関数
-boolean idxExist(int [][] array){
-  if(array[array.length - 1].length != 0){
-    return true;
+//指定されたインデックスが不正であればfalseを返す
+boolean valueExist(int [][] array, int idx){
+  if(idx <= array.length - 1 && idx >= 0){
+    if(array[idx].length != 0){
+      return true;
+    }else{
+      return false;
+    }
   }else{
     return false;
   }
-  //クソッタレshortenめ、インデックスが不正になることをまるで考えてない！
 }
 
 
@@ -108,7 +117,7 @@ void mousePressed(){
     }
   //右クリックなら座標削除
   //既に完成したピースは削除不可能
-  }else if(mouseButton == RIGHT && idxExist(matrixX)){
+  }else if(mouseButton == RIGHT && valueExist(matrixX, matrixX.length - 1)){
     matrixX[matrixX.length - 1] = shorten(matrixX[matrixX.length - 1]);
     matrixY[matrixY.length - 1] = shorten(matrixY[matrixY.length - 1]);
   }
@@ -117,7 +126,7 @@ void mousePressed(){
 void keyPressed(){
   //txt出力及び終了
   //「未完成」或いは「選択中」のピースは書き込まれない
-  //データでは閉じないので、二次元目の最後は書き込まない
+  //データではピースを閉じないので、二次元目の最後は書き込まない
   //一次元目0番は枠データだから最後に書き込む
   if(key == 'q'){
     save("puzzle.png");
@@ -215,7 +224,7 @@ void draw(){
         }
       }
       //現在の始点には赤いサークルを
-      if(idxExist(matrixX)){
+      if(valueExist(matrixX, matrixX.length - 1)){
         if(w == matrixX[matrixX.length - 1][0] && h == matrixY[matrixY.length - 1][0]){
           noFill();
           stroke(255, 0, 0);
@@ -234,6 +243,6 @@ void draw(){
 }
 
 //メモ
-//Array = Array はシャロー・コピーになる
-//配列関数は二次元配列をサポートしない
+//配列 = 配列 はシャロー・コピーになる
+//配列関数は多次元配列の最深レベル以外をサポートしない
 //createWriterは実行された時点で同名ファイルを空にする
