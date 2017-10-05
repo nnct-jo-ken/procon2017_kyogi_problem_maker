@@ -1,9 +1,9 @@
 //描画用変数
-final int grid_margin = 20;
-final int grid_space = 20;
+final int grid_margin = 10;
+final int grid_space = 10;
 
 void setup(){
-  size(400, 400);
+  size(1020, 660);
   background(0);
   stroke(255);
   fill(255);
@@ -18,6 +18,10 @@ int [][] matrixY = { {} };
 //座標保護用配列(二次元)
 int [][] matrixX_sub = { {} };
 int [][] matrixY_sub = { {} };
+
+//座標移動乱数用変数
+int addX = 0;
+int addY = 0;
 
 //テキスト出力用変数
 PrintWriter output;
@@ -83,7 +87,7 @@ int [][] deep_copy(int [][] array){
   return copy;
 }
 
-//一次元目の尻の配列に、要素が存在するかどうか判定する関数
+//一次元目の指定したインデックスの構成配列に、要素が存在するかどうか判定する関数
 //指定されたインデックスが不正であればfalseを返す
 boolean valueExist(int [][] array, int idx){
   if(idx <= array.length - 1 && idx >= 0){
@@ -101,7 +105,7 @@ boolean valueExist(int [][] array, int idx){
 
 void mousePressed(){
   
-  //左クリックなら座標追加、始点と同じ座標なら一次元目に空配列を追加
+  //左クリックなら座標追加、始点と同じ座標なら一次元目に空配列を追加、ピース数を表示
   if(mouseButton == LEFT){
     for(int w = grid_margin; w <= width - grid_margin; w += grid_space){
       for(int h = grid_margin; h <= height - grid_margin; h += grid_space){
@@ -111,6 +115,8 @@ void mousePressed(){
           if(w == matrixX[matrixX.length - 1][0] && h == matrixY[matrixY.length - 1][0] && matrixX[matrixX.length - 1].length != 1){
             matrixX = addArray(matrixX);
             matrixY = addArray(matrixY);
+            println("ピースが完成しました");
+            println("　ピース数：" + (matrixX.length - 2));
           }
         }
       }
@@ -123,18 +129,34 @@ void mousePressed(){
   }
 }
 
+//二次元配列の1次元目の指定されたインデックスの構成配列の最大値を「返す」関数
+//Rubyの…　何だったか忘れたけど「返す」という点が違う
+//別に某マックスバリュのステマとかじゃない
+int maxValue(int [][] array, int idx){
+  int max = 0;
+  for(int idx_2nd = 0; idx_2nd < array[idx].length; idx_2nd++){
+    if(array[idx][idx_2nd] > max){
+      max = array[idx][idx_2nd];
+    }
+  }
+  return max;
+}
+
 void keyPressed(){
   //txt出力及び終了
   //「未完成」或いは「選択中」のピースは書き込まれない
   //データではピースを閉じないので、二次元目の最後は書き込まない
   //一次元目0番は枠データだから最後に書き込む
+  //相対座標を保ったまま絶対座標を0 <= x <= 100、0 <= y <= 64 の間でランダムに動かす
   if(key == 'q'){
     save("puzzle.png");
     for(int idx_1st = 1; idx_1st < matrixX.length - 1; idx_1st++){
+      addX = int(random(0, 101 - (maxValue(matrixX, idx_1st) - grid_margin) / grid_space) );
+      addY = int(random(0, 64 - (maxValue(matrixY, idx_1st) - grid_margin) / grid_space) );
       for(int idx_2nd = 0; idx_2nd < matrixX[idx_1st].length - 1; idx_2nd++){
-        output.print((matrixX[idx_1st][idx_2nd] - grid_margin) / grid_space);
+        output.print((matrixX[idx_1st][idx_2nd] - grid_margin) / grid_space + addX);
         output.print(" ");
-        output.print((matrixY[idx_1st][idx_2nd] - grid_margin) / grid_space);
+        output.print((matrixY[idx_1st][idx_2nd] - grid_margin) / grid_space + addY);
         if(idx_2nd != matrixX[idx_1st].length - 2){
           output.print(" ");
         }
@@ -156,21 +178,29 @@ void keyPressed(){
   }else if(key == 'r'){
     matrixX = new int [1][0];
     matrixY = new int [1][0];
-  //現時点での座標を全て保護
+    println("座標を全消去しました");
+    println("　ピース数：" + (matrixX.length - 2));
+  //現時点での座標を全て保護、保護したピース数を表示
   }else if(key == 'c'){
+    println("ピースを保護しました");
+    println("　ピース数：" + (matrixX.length - 2));
     matrixX_sub = deep_copy(matrixX);
     matrixY_sub = deep_copy(matrixY);
-  //保護した座標を全て復活
+  //保護した座標を全て復活、現在のピース数を表示
   }else if(key == 'v'){
     matrixX = deep_copy(matrixX_sub);
     matrixY = deep_copy(matrixY_sub);
-  //最後に完成したピース・枠を削除
+    println("ピースを復活しました");
+    println("　ピース数：" + (matrixX.length - 2));
+  //最後に完成したピース・枠を削除、残りピース数を表示
   //完成したピース・枠がない場合機能しない
   }else if(key == 'd'){
     if(matrixX.length != 1){
       matrixX = delete_at(matrixX, matrixX.length - 2);
       matrixY = delete_at(matrixY, matrixY.length - 2);
     }
+    println("最後のピースを削除しました");
+    println("　ピース数：" + (matrixX.length - 2));
   }
 }
 
